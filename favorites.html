@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Favorites | GemTrader</title>
+  <link rel="icon" type="image/png" href="images/mainlogo.png" />
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="app.js"></script>
+</head>
+<body>
+<header class="site-header">
+    <a class="brand" href="index.html"><img src="images/Logo.png" alt="GemTrader Logo" /></a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-label="Toggle navigation">☰</button>
+    <nav>
+  <a href="index.html">Home</a>
+  <a href="gallery.html">Gemstones</a>
+  <a href="index.html#about">About Us</a>
+  <a href="events.html">Events</a>
+  <a href="contact.html">Contact</a>
+
+  <div class="dropdown">
+    <a href="categories.html" class="dropbtn">Gem Categories ▼</a>
+    <div class="dropdown-content">
+      <a href="sapphire.html">Sapphire</a>
+      <a href="ruby.html">Ruby</a>
+
+      <a href="tourmaline.html">Tourmaline</a>
+      <a href="aquamarine.html">Aquamarine</a>
+    </div>
+  </div>
+  </nav>
+    <form id="headerSearchForm" class="header-search">
+      <input type="search" id="headerSearchInput" placeholder="Search gemstones..." oninput="syncSearch(this.value)" />
+      <button type="submit" aria-label="Search">🔍</button>
+    </form>
+    <div class="header-icons">
+      <select id="categorySelect" onchange="navigateCategory(this.value)" aria-label="Select gem category">
+        <option value="">All Categories</option>
+        <option value="Sapphire">Sapphire</option>
+        <option value="Ruby">Ruby</option>
+  
+        <option value="Tourmaline">Tourmaline</option>
+        <option value="Aquamarine">Aquamarine</option>
+      </select>
+      <a href="favorites.html" class="icon-btn" aria-label="Favorites">♡</a>
+      <a href="cart.html" class="cart" aria-label="Cart">🛒<b>1</b></a>
+   
+    </div>
+  </header>
+
+  <main>
+    <section class="page-hero favorite-hero">
+      <div class="page-hero-copy">
+        <p class="section-kicker">FAVORITES</p>
+        <h1>Saved Gemstone Picks</h1>
+        <p>Your curated favorites are ready to review, compare and move into checkout.</p>
+      </div>
+    </section>
+
+    <section class="content-grid favorite-page" id="favoriteList"></section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-column"><h3>GemTrader</h3><p>Keep your favorite gems saved while you compare quality, origin and pricing.</p></div>
+      <div class="footer-column"><h3>Quick Links</h3><ul><li><a href="dashboard.html">Gemstones</a></li><li><a href="cart.html">Cart</a></li><li><a href="contact.html">Contact</a></li><li><a href="gallery.html">Gallery</a></li></ul></div>
+      <div class="footer-column"><h3>Gem Categories</h3><ul><li><a href="ruby.html">Ruby</a></li><li><a href="sapphire.html">Sapphire</a></li><li><a href="tourmaline.html">Tourmaline</a></li><li><a href="aquamarine.html">Aquamarine</a></li></ul></div>
+      <div class="footer-column"><h3>Contact Us</h3><p>📍 Ratnapura, Sri Lanka</p><p>📞 +94 71 234 5678</p><p>✉ info@gemtrader.lk</p><p>🌐 www.gemtrader.lk</p></div>
+    </div>
+    <div class="footer-bottom"><p>© 2026 GemTrader.lk | All Rights Reserved | Sri Lanka's Digital Gem Marketplace</p></div>
+  </footer>
+  <div id="searchOverlay" class="search-overlay" aria-hidden="true">
+    <div class="search-container">
+      <input type="search" id="searchInput" placeholder="Search gemstones..." onkeydown="handleSearchKey(event)" />
+      <button type="button" onclick="closeSearch()" aria-label="Close search">✕</button>
+      <div id="searchResults" class="search-results"></div>
+    </div>
+  </div>
+  <style>
+    .site-header {
+      position: relative;
+    }
+
+    .brand {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .header-search{flex:1;max-width:350px;margin-left:auto;position:relative}
+    .header-search input{width:100%;border:1px solid #e3e9ed;background:#f7faf9;border-radius:40px;padding:14px 50px 14px 20px;font-size:15px;outline:none;transition:.25s}
+    .header-search input:focus{border-color:#0b7b48;background:#fff;box-shadow:0 8px 24px rgba(11,123,72,.12)}
+    .header-search button{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:38px;height:38px;border:0;border-radius:50%;background:#0b7b48;color:#fff;cursor:pointer;font-size:16px}
+    .header-icons{display:flex;align-items:center;gap:20px;font-size:22px;margin-left:8px}
+  </style>
+  <script>
+    function getPageFavorites() {
+      return window.getFavoriteItems ? window.getFavoriteItems() : JSON.parse(localStorage.getItem('gemTraderFavorites') || '[]');
+    }
+
+    function savePageFavorites(items) {
+      if (window.saveFavoriteItems) {
+        window.saveFavoriteItems(items);
+      } else {
+        localStorage.setItem('gemTraderFavorites', JSON.stringify(items));
+      }
+    }
+
+    function getPageCart() {
+      return window.getCartItems ? window.getCartItems() : JSON.parse(localStorage.getItem('gemTraderCart') || '[]');
+    }
+
+    function savePageCart(items) {
+      if (window.saveCartItems) {
+        window.saveCartItems(items);
+      } else {
+        localStorage.setItem('gemTraderCart', JSON.stringify(items));
+      }
+    }
+
+    function renderFavorites() {
+      const container = document.getElementById('favoriteList');
+      if (!container) return;
+      const favorites = getPageFavorites();
+      if (!favorites.length) {
+        container.innerHTML = `
+          <div class="empty-favorites">
+            <h2>No favorites yet</h2>
+            <p>Save gemstones from the dashboard to view them here.</p>
+            <a href="dashboard.html" class="hero-link">Browse gemstones</a>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = favorites.map(id => {
+        const product = window.getProductById ? window.getProductById(id) : null;
+        if (!product) return '';
+        return `
+          <article class="favorite-card">
+            <img src="${product.image}" alt="${product.title}">
+            <div>
+              <h3>${product.title}</h3>
+              <p>${product.description}</p>
+              <p class="price-row"><strong>$${product.price.toFixed(2)}</strong><span>Category: ${product.category}</span></p>
+              <div class="action-row">
+                <a href="gem.html?id=${product.id}">View details</a>
+                <button type="button" class="hero-link" onclick="moveFavoriteToCart(${product.id})">Move to cart</button>
+                <button type="button" class="remove-btn" onclick="removeFavorite(${product.id})">Remove</button>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function moveFavoriteToCart(id) {
+      const favorites = getPageFavorites().filter(item => item !== id);
+      savePageFavorites(favorites);
+      const cart = getPageCart();
+      const existing = cart.find(item => item.id === id);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ id, qty: 1 });
+      }
+      savePageCart(cart);
+      window.updateCartCount?.();
+      window.updateFavoriteCount?.();
+      window.showToast?.('Moved item to cart', 'success');
+      renderFavorites();
+    }
+
+    function removeFavorite(id) {
+      const favorites = getPageFavorites().filter(item => item !== id);
+      savePageFavorites(favorites);
+      window.updateFavoriteCount?.();
+      window.showToast?.('Removed from favorites', 'warning');
+      renderFavorites();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderFavorites();
+      window.updateFavoriteCount?.();
+      window.updateCartCount?.();
+    });
+  </script>
+</body>
+</html>
+
+

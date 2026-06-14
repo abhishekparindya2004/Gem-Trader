@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gemstones | GemTrader</title>
+    <link rel="icon" type="image/png" href="images/mainlogo.png" />
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="app.js"></script>
+
+  <style>
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;color:#182534;background:#fff;transition:background .4s ease,color .4s ease}
+    a{text-decoration:none;color:inherit}
+    button,input,select{font-family:inherit}
+
+    .site-header{min-height:86px;display:flex;align-items:center;gap:24px;padding:0 6%;border-bottom:1px solid #e8edf1;background:#fff;position:sticky;top:0;z-index:1000;transition:.4s ease}
+    .brand{display:flex;align-items:center;margin-right:auto;flex-shrink:0}
+    .brand img{width:175px;height:auto;object-fit:contain;display:block}
+
+    nav{display:flex;align-items:center;gap:28px;font-weight:700;color:#3d4752;white-space:nowrap}
+    nav a.active,nav a:hover{color:#d09300}
+
+    .dropdown{position:relative;display:inline-block}
+    .dropdown-content{display:none;position:absolute;top:100%;left:0;min-width:220px;background:#fff;border-radius:14px;box-shadow:0 12px 35px rgba(0,0,0,.16);overflow:hidden;z-index:9999;border:1px solid #eef2f4}
+    .dropdown-content a{display:block;padding:14px 18px;color:#333;font-weight:700;border-bottom:1px solid #eef2f4;white-space:nowrap}
+    .dropdown-content a:hover{background:#f5faf7;color:#0b7b48}
+    .dropdown:hover .dropdown-content{display:block}
+
+    .menu-toggle{display:none;width:48px;height:48px;border:none;border-radius:15px;background:#0b7b48;color:#fff;font-size:25px;cursor:pointer;margin-left:auto}
+
+    .header-search{flex:1;max-width:350px;margin-left:auto;position:relative}
+    .header-search input{width:100%;border:1px solid #e3e9ed;background:#f7faf9;border-radius:40px;padding:14px 50px 14px 20px;font-size:15px;outline:none;transition:.25s}
+    .header-search input:focus{border-color:#0b7b48;background:#fff;box-shadow:0 8px 24px rgba(11,123,72,.12)}
+    .header-search button{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:38px;height:38px;border:0;border-radius:50%;background:#0b7b48;color:#fff;cursor:pointer;font-size:16px}
+
+    .header-icons{display:flex;align-items:center;gap:18px;font-size:22px;margin-left:8px;flex-shrink:0}
+    #categorySelect{border:1px solid #e3e9ed;background:#f7faf9;border-radius:30px;padding:10px 14px;font-weight:700;color:#3d4752;outline:none;cursor:pointer;max-width:160px}
+    .icon-btn,.cart{border:0;background:none;font-size:23px;cursor:pointer;color:#182534;transition:.3s ease;padding:4px;line-height:1}
+    .icon-btn:hover,.cart:hover{transform:scale(1.12);color:#d09300}
+    .cart{position:relative;display:inline-block}
+    .cart b{position:absolute;right:-9px;top:-12px;background:#d89b00;color:#fff;border-radius:50%;font-size:12px;padding:3px 6px}
+
+    .shop-layout{display:block;padding:50px 5% 20px;max-width:1500px;margin:0 auto}
+    .products-wrap{width:100%}
+    .products-wrap h1{text-align:center;font-size:44px;margin:0 0 8px;font-family:Georgia,serif;color:#0c2b1e}
+    .products-subtitle{text-align:center;color:#66737f;margin-bottom:26px}
+
+    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:24px 0 30px;flex-wrap:wrap}
+    .toolbar-left{display:flex;gap:12px;flex-wrap:wrap}
+    .toolbar button{border:0;background:#f4f6f8;border-radius:24px;padding:13px 20px;font-size:15px;cursor:pointer;transition:.3s ease;font-weight:700}
+    .toolbar button:hover{background:#0b7b48;color:#fff;transform:translateY(-2px)}
+    .results-count{color:#66737f;font-weight:700}
+
+    .product-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:34px;align-items:stretch}
+    .product-card{display:flex;flex-direction:column;height:100%;cursor:pointer;transition:.35s ease;background:#fff;border:1px solid #edf0f3;border-radius:28px;padding:14px;box-shadow:0 14px 40px rgba(0,0,0,.08)}
+    .product-card:hover{transform:translateY(-8px)}
+
+    .gem-img{width:100%;aspect-ratio:1/1;border:1px solid #dfe6eb;border-radius:22px;overflow:hidden;position:relative;background:#eef3f7}
+    .gem-img img{width:100%;height:100%;object-fit:cover;display:block;transition:.35s ease}
+    .product-card:hover .gem-img img{transform:scale(1.05)}
+
+    .heart,.play,.cart-small{position:absolute;background:#fff;border-radius:50%;display:grid;place-items:center;box-shadow:0 5px 12px #0002;transition:.3s ease;border:0;color:#182534;cursor:pointer}
+    .heart:hover,.play:hover,.cart-small:hover,.heart.active{background:#0b7b48;color:#fff}
+    .heart{right:18px;top:18px;width:38px;height:38px}
+    .play{right:64px;bottom:18px;width:40px;height:40px}
+    .cart-small{right:18px;bottom:18px;width:40px;height:40px}
+
+    .product-title{min-height:48px;display:flex;align-items:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:16px 0 8px;font-size:17px;font-weight:700;color:#172536}
+    .price-row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:auto}
+    .price{font-size:20px;font-weight:800;color:#0c2b1e}
+    .stock{color:#00984b;font-weight:700;font-size:14px}
+
+    .no-results{display:none;text-align:center;padding:60px 20px;background:#f6f8f9;border-radius:24px;color:#66737f;font-size:18px;margin-top:30px}
+
+    .search-overlay{position:fixed;top:0;left:0;width:100%;height:100vh;background:rgba(0,0,0,.48);backdrop-filter:blur(6px);display:flex;justify-content:center;align-items:flex-start;padding:120px 20px 0;z-index:9999;opacity:0;visibility:hidden;transition:.3s ease}
+    .search-overlay.active{opacity:1;visibility:visible}
+    .search-container{width:70%;max-width:850px;background:white;border-radius:60px;padding:10px;display:flex;align-items:center;box-shadow:0 20px 50px rgba(0,0,0,.18)}
+    .search-container input{flex:1;border:none;outline:none;font-size:18px;padding:18px 25px;background:transparent}
+    .search-container button{border:none;background:#0b7b48;color:white;width:50px;height:50px;border-radius:50%;cursor:pointer;font-size:18px}
+
+    .site-footer{background:#0c2b1e;color:#fff;margin-top:80px}
+    .footer-container{width:90%;max-width:1400px;margin:auto;padding:70px 0;display:grid;grid-template-columns:repeat(4,1fr);gap:40px}
+    .footer-column h3{color:#d4af37;margin-bottom:20px;font-size:22px}
+    .footer-column p{line-height:1.8;color:#dcdcdc}
+    .footer-column ul{list-style:none;padding:0;margin:0}
+    .footer-column ul li{margin-bottom:12px}
+    .footer-column ul li a{color:#dcdcdc;transition:.3s}
+    .footer-column ul li a:hover{color:#d4af37;padding-left:5px}
+    .footer-bottom{text-align:center;padding:20px;border-top:1px solid rgba(255,255,255,.1);color:#cfcfcf;font-size:14px}
+
+    @media(max-width:1200px){.site-header{padding:0 4%;gap:16px}.brand img{width:145px}nav{gap:16px}.product-grid{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}}
+    @media(max-width:900px){.site-header{flex-wrap:wrap;padding:14px 5%;gap:14px}.menu-toggle{display:inline-flex;align-items:center;justify-content:center}.site-header nav{display:none}.site-header.nav-open nav{display:flex;flex-direction:column;align-items:flex-start;width:100%;gap:14px;background:#fff;padding:18px;border-radius:22px;box-shadow:0 18px 60px rgba(0,0,0,.12);order:4}.site-header.nav-open .dropdown-content{position:static;display:none;box-shadow:none;margin-top:8px}.site-header.nav-open .dropdown:hover .dropdown-content{display:block}.header-search{order:5;width:100%;max-width:none}.header-icons{width:100%;justify-content:flex-end;flex-wrap:wrap;margin-left:0;order:6}.footer-container{grid-template-columns:1fr 1fr}.search-container{width:92%}}
+    @media(max-width:650px){.site-header{min-height:74px}.brand img{width:120px}.header-icons{gap:14px;font-size:19px}#categorySelect{max-width:145px}.shop-layout{padding:24px 4%}.product-grid{grid-template-columns:1fr}.products-wrap h1{font-size:34px}.toolbar{justify-content:center;text-align:center}.footer-container{grid-template-columns:1fr}.search-container input{font-size:15px;padding:14px}}
+  </style>
+</head>
+<body>
+  <header class="site-header" id="siteHeader">
+    <a class="brand" href="index.html"><img src="images/Logo.png" alt="GemTrader Logo" /></a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-label="Toggle navigation">☰</button>
+
+    <nav>
+      <a href="index.html">Home</a>
+      <a class="active" href="gallery.html">Gemstones</a>
+      <a href="index.html#about">About Us</a>
+      <a href="events.html">Events</a>
+      <a href="contact.html">Contact</a>
+      <div class="dropdown">
+        <a href="categories.html" class="dropbtn">Gem Categories ▼</a>
+        <div class="dropdown-content">
+          <a href="sapphire.html">Sapphire</a>
+          <a href="ruby.html">Ruby</a>
+          <a href="tourmaline.html">Tourmaline</a>
+          <a href="aquamarine.html">Aquamarine</a>
+        </div>
+      </div>
+    </nav>
+
+    <form id="headerSearchForm" class="header-search">
+      <input type="search" id="headerSearchInput" placeholder="Search gemstones..." autocomplete="off" />
+      <button type="submit" aria-label="Search">🔍</button>
+    </form>
+
+    <div class="header-icons">
+      <select id="categorySelect" aria-label="Select gem category">
+        <option value="">All Categories</option>
+        <option value="Sapphire">Sapphire</option>
+        <option value="Ruby">Ruby</option>
+        <option value="Tourmaline">Tourmaline</option>
+        <option value="Aquamarine">Aquamarine</option>
+      </select>
+      <a href="favorites.html" class="icon-btn" aria-label="Favorites">♡</a>
+      <a href="cart.html" class="cart" aria-label="Cart">🛒<b id="cartCount">0</b></a>
+    </div>
+  </header>
+
+  <main class="shop-layout">
+    <section class="products-wrap">
+      <h1>Gemstones</h1>
+      <p class="products-subtitle">Explore premium gemstones with verified quality and trusted sellers.</p>
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <button type="button" id="sortButton">⇅ Sort by Price</button>
+          <button type="button" id="clearButton">Clear Filters</button>
+        </div>
+        <span class="results-count" id="resultsCount">0 products found</span>
+      </div>
+      <div class="product-grid" id="productGrid"></div>
+      <div class="no-results" id="noResults">No gemstones found. Try another search keyword.</div>
+    </section>
+  </main>
+
+  <footer class="site-footer" id="contact">
+    <div class="footer-container">
+      <div class="footer-column"><h3>GemTrader</h3><p>Sri Lanka's trusted digital gemstone marketplace connecting verified buyers and sellers worldwide.</p></div>
+      <div class="footer-column"><h3>Quick Links</h3><ul><li><a href="index.html">Home</a></li><li><a href="gallery.html">Gemstones</a></li><li><a href="index.html#about">About Us</a></li><li><a href="events.html">Events</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+      <div class="footer-column"><h3>Gem Categories</h3><ul><li><a href="gallery.html?category=Sapphire">Sapphire</a></li><li><a href="gallery.html?category=Ruby">Ruby</a></li><li><a href="gallery.html?category=Tourmaline">Tourmaline</a></li><li><a href="gallery.html?category=Aquamarine">Aquamarine</a></li></ul></div>
+      <div class="footer-column"><h3>Contact Us</h3><p>📍 Ratnapura, Sri Lanka</p><p>📞 +94 71 234 5678</p><p>✉ info@gemtrader.lk</p><p>🌐 www.gemtrader.lk</p></div>
+    </div>
+    <div class="footer-bottom"><p>© 2026 GemTrader.lk | All Rights Reserved | Sri Lanka's Digital Gem Marketplace</p></div>
+  </footer>
+
+  <div id="searchOverlay" class="search-overlay">
+    <div class="search-container">
+      <input type="text" id="overlaySearchInput" placeholder="Search gemstones, ruby, sapphire, aquamarine..." />
+      <button type="button" id="closeSearchButton">✕</button>
+    </div>
+  </div>
+
+  <script>
+    const fallbackProducts = [
+      {id:1,title:'Royal Blue Ceylon Sapphire',category:'Sapphire',price:3200,image:'images/sapphire.jpg'},
+      {id:2,title:'Natural Pink Sapphire',category:'Sapphire',price:1850,image:'images/pink-sapphire.jpg'},
+      {id:3,title:'Premium Red Ruby',category:'Ruby',price:2750,image:'images/ruby.jpg'},
+      {id:4,title:'Oval Cut Ruby Gemstone',category:'Ruby',price:2100,image:'images/ruby-oval.jpg'},
+      {id:5,title:'Green Tourmaline Crystal',category:'Tourmaline',price:980,image:'images/tourmaline.jpg'},
+      {id:6,title:'Watermelon Tourmaline',category:'Tourmaline',price:1450,image:'images/watermelon-tourmaline.jpg'},
+      {id:7,title:'Ocean Blue Aquamarine',category:'Aquamarine',price:1250,image:'images/aquamarine.jpg'},
+      {id:8,title:'Light Blue Aquamarine Stone',category:'Aquamarine',price:870,image:'images/aquamarine-light.jpg'},
+      {id:9,title:'Star Sapphire Collection',category:'Sapphire',price:4100,image:'images/star-sapphire.jpg'},
+      {id:10,title:'Certified Ruby Luxury Stone',category:'Ruby',price:3900,image:'images/RubyOvalCut .jpg'}
+    ];
+
+    let allProducts = [];
+    let priceAscending = true;
+    let currentSearch = '';
+    let currentCategory = '';
+
+    const grid = document.getElementById('productGrid');
+    const noResults = document.getElementById('noResults');
+    const resultsCount = document.getElementById('resultsCount');
+    const categorySelect = document.getElementById('categorySelect');
+    const headerSearchInput = document.getElementById('headerSearchInput');
+    const overlaySearchInput = document.getElementById('overlaySearchInput');
+    const cartCount = document.getElementById('cartCount');
+
+    function safeProducts(){
+      const external = Array.isArray(window.gemProducts) ? window.gemProducts : [];
+      const products = external.length ? external : fallbackProducts;
+      return products.map((product,index) => ({
+        id: product.id ?? index + 1,
+        title: product.title || product.name || 'Untitled Gemstone',
+        category: product.category || 'Gemstone',
+        price: Number(product.price || 0),
+        image: product.image || product.img || 'images/Logo.png'
+      }));
+    }
+
+    function getLocalCart(){
+      return window.getCartItems ? window.getCartItems() : (JSON.parse(localStorage.getItem('gemTraderCart') || '[]'));
+    }
+
+    function saveLocalCart(cart){
+      if(window.saveCartItems) return window.saveCartItems(cart);
+      localStorage.setItem('gemTraderCart', JSON.stringify(cart));
+    }
+
+    function getLocalFavorites(){
+      return window.getFavoriteItems ? window.getFavoriteItems() : (JSON.parse(localStorage.getItem('gemTraderFavorites') || '[]'));
+    }
+
+    function saveLocalFavorites(favorites){
+      if(window.saveFavoriteItems) return window.saveFavoriteItems(favorites);
+      localStorage.setItem('gemTraderFavorites', JSON.stringify(favorites));
+    }
+
+    function renderProducts(products){
+      grid.innerHTML = '';
+      const favorites = getLocalFavorites();
+
+      products.forEach(product => {
+        const isFav = favorites.some(item => String(item) === String(product.id));
+        const card = document.createElement('article');
+        card.className = 'product-card';
+        card.dataset.category = product.category;
+        card.dataset.title = product.title;
+        card.dataset.price = product.price;
+        card.dataset.id = product.id;
+
+        card.innerHTML = `
+          <div class="gem-img">
+            <img src="${product.image}" alt="${product.title}" onerror="this.src='images/Logo.png'">
+            <button class="heart ${isFav ? 'active' : ''}" type="button" aria-label="Add to favorites">♡</button>
+            <button class="play" type="button" aria-label="View gemstone">▶</button>
+            <button class="cart-small" type="button" aria-label="Add to cart">🛒</button>
+          </div>
+          <div class="product-title" title="${product.title}">${product.title}</div>
+          <div class="price-row"><span class="price">$${product.price.toLocaleString()}</span><span class="stock">In stock</span></div>
+        `;
+
+        card.addEventListener('click', () => {
+          window.location.href = `gem.html?id=${encodeURIComponent(product.id)}`;
+        });
+
+        grid.appendChild(card);
+      });
+
+      attachCardActions();
+      applyFilters();
+    }
+
+    function applyFilters(){
+      let visibleCount = 0;
+      document.querySelectorAll('.product-card').forEach(card => {
+        const title = card.dataset.title.toLowerCase();
+        const category = card.dataset.category.toLowerCase();
+        const matchesSearch = !currentSearch || title.includes(currentSearch) || category.includes(currentSearch);
+        const matchesCategory = !currentCategory || card.dataset.category === currentCategory;
+        const show = matchesSearch && matchesCategory;
+        card.style.display = show ? 'flex' : 'none';
+        if(show) visibleCount++;
+      });
+      noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+      resultsCount.textContent = `${visibleCount} ${visibleCount === 1 ? 'product' : 'products'} found`;
+    }
+
+    function syncSearch(value){
+      currentSearch = value.toLowerCase().trim();
+      headerSearchInput.value = value;
+      overlaySearchInput.value = value;
+      applyFilters();
+    }
+
+    function setCategory(value){
+      currentCategory = value;
+      categorySelect.value = value;
+      applyFilters();
+    }
+
+    function sortByPrice(){
+      const cards = Array.from(document.querySelectorAll('.product-card'));
+      cards.sort((a,b) => {
+        const priceA = Number(a.dataset.price);
+        const priceB = Number(b.dataset.price);
+        return priceAscending ? priceA - priceB : priceB - priceA;
+      });
+      cards.forEach(card => grid.appendChild(card));
+      priceAscending = !priceAscending;
+    }
+
+    function clearFilters(){
+      currentSearch = '';
+      currentCategory = '';
+      headerSearchInput.value = '';
+      overlaySearchInput.value = '';
+      categorySelect.value = '';
+      applyFilters();
+    }
+
+    function closeSearch(){
+      document.getElementById('searchOverlay').classList.remove('active');
+    }
+
+    function updateCartCount(){
+      const cart = getLocalCart();
+      const total = cart.reduce((sum, item) => sum + (item.qty ?? item.quantity ?? 0), 0);
+      cartCount.textContent = total;
+    }
+
+    function attachCardActions(){
+      document.querySelectorAll('.heart,.cart-small,.play').forEach(button => {
+        button.addEventListener('click', event => {
+          event.preventDefault();
+          event.stopPropagation();
+
+          const card = button.closest('.product-card');
+          const product = allProducts.find(item => String(item.id) === String(card.dataset.id));
+          if(!product) return;
+
+          if(button.classList.contains('heart')){
+            let favorites = getLocalFavorites();
+            const exists = favorites.some(item => String(item) === String(product.id));
+            favorites = exists ? favorites.filter(item => String(item) !== String(product.id)) : [...favorites, product.id];
+            saveLocalFavorites(favorites);
+            button.classList.toggle('active', !exists);
+          }
+
+          if(button.classList.contains('cart-small')){
+            const cart = getLocalCart();
+            const existing = cart.find(item => String(item.id) === String(product.id));
+            if(existing){
+              existing.qty = (existing.qty ?? existing.quantity ?? 0) + 1;
+            } else {
+              cart.push({id: product.id, qty: 1});
+            }
+            saveLocalCart(cart);
+            window.updateCartCount?.();
+            button.textContent = '✓';
+            setTimeout(() => button.textContent = '🛒', 900);
+          }
+
+          if(button.classList.contains('play')){
+            window.location.href = `gem.html?id=${encodeURIComponent(product.id)}`;
+          }
+        });
+      });
+    }
+
+    function readUrlFilters(){
+      const params = new URLSearchParams(window.location.search);
+      const category = params.get('category') || '';
+      const search = params.get('search') || '';
+      currentCategory = category;
+      currentSearch = search.toLowerCase().trim();
+      categorySelect.value = currentCategory;
+      headerSearchInput.value = search;
+      overlaySearchInput.value = search;
+    }
+
+    function initDashboard(){
+      allProducts = safeProducts();
+      readUrlFilters();
+      renderProducts(allProducts);
+      updateCartCount();
+    }
+
+    document.querySelector('.menu-toggle').addEventListener('click', function(){
+      const header = document.getElementById('siteHeader');
+      const isOpen = header.classList.toggle('nav-open');
+      this.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    document.getElementById('headerSearchForm').addEventListener('submit', event => {
+      event.preventDefault();
+      syncSearch(headerSearchInput.value);
+    });
+
+    headerSearchInput.addEventListener('input', event => syncSearch(event.target.value));
+    overlaySearchInput.addEventListener('input', event => syncSearch(event.target.value));
+    categorySelect.addEventListener('change', event => setCategory(event.target.value));
+    document.getElementById('sortButton').addEventListener('click', sortByPrice);
+    document.getElementById('clearButton').addEventListener('click', clearFilters);
+    document.getElementById('closeSearchButton').addEventListener('click', closeSearch);
+
+    document.getElementById('searchOverlay').addEventListener('click', event => {
+      if(event.target.id === 'searchOverlay') closeSearch();
+    });
+
+    window.addEventListener('keydown', event => {
+      if(event.key === 'Escape') closeSearch();
+    });
+
+    if(document.readyState === 'loading'){
+      document.addEventListener('DOMContentLoaded', initDashboard);
+    }else{
+      initDashboard();
+    }
+  </script>
+</body>
+</html>

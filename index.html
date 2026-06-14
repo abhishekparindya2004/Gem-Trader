@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GemTrader | Gemstone Collection</title>
+  <link rel="icon" type="image/png" href="images/mainlogo.png" />
+
+  <style>
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;color:#182534;background:#fff;overflow-x:hidden;transition:background .4s ease,color .4s ease}
+    a{text-decoration:none;color:inherit}
+
+    .site-header{min-height:104px;display:flex;align-items:center;gap:30px;padding:0 5%;border-bottom:1px solid #e8edf1;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);position:sticky;top:0;z-index:1000;transition:.4s ease}
+    .brand{display:flex;align-items:center;flex-shrink:0}
+    .brand img{width:300px;max-height:118px;object-fit:contain;display:block;transition:.4s ease;filter:drop-shadow(0 8px 16px rgba(0,0,0,.08))}
+    .brand img:hover{transform:scale(1.04)}
+    nav{display:flex;gap:28px;font-weight:700;color:#3d4752;white-space:nowrap}
+    nav a{position:relative;padding:8px 0;transition:.3s}
+    nav a::after{content:"";position:absolute;left:0;bottom:0;width:0;height:2px;background:#d4af37;transition:.3s}
+    nav a:hover{color:#0b7b48}
+    nav a:hover::after{width:100%}
+
+    /* Dropdown Navigation */
+    .dropdown{position:relative;display:inline-block}
+    .dropbtn{color:#3d4752;font-weight:700;padding:8px 0;display:inline-block}
+    .dropdown-content{display:none;position:absolute;top:100%;left:0;min-width:220px;background:#fff;border-radius:14px;box-shadow:0 12px 35px rgba(0,0,0,.16);overflow:hidden;z-index:9999;border:1px solid #eef2f4}
+    .dropdown-content a{display:block;padding:14px 18px;color:#333;font-weight:700;border-bottom:1px solid #eef2f4;white-space:nowrap}
+    .dropdown-content a:last-child{border-bottom:none}
+    .dropdown-content a::after{display:none}
+    .dropdown-content a:hover{background:#f5faf7;color:#0b7b48}
+    .dropdown:hover .dropdown-content{display:block}
+
+    .menu-toggle{display:none;width:50px;height:50px;border:none;border-radius:16px;background:#0b7b48;color:#fff;font-size:26px;cursor:pointer;align-items:center;justify-content:center;transition:transform .25s ease,background .25s ease;margin-left:auto}
+    .menu-toggle:hover{transform:scale(1.05);background:#0f8f52}
+
+    .header-search{flex:1;max-width:350px;margin-left:auto;position:relative}
+    .header-search input{width:100%;border:1px solid #e3e9ed;background:#f7faf9;border-radius:40px;padding:14px 50px 14px 20px;font-size:15px;outline:none;transition:.25s}
+    .header-search input:focus{border-color:#0b7b48;background:#fff;box-shadow:0 8px 24px rgba(11,123,72,.12)}
+    .header-search button{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:38px;height:38px;border:0;border-radius:50%;background:#0b7b48;color:#fff;cursor:pointer;font-size:16px}
+    .header-icons{display:flex;align-items:center;gap:20px;font-size:22px;margin-left:8px}
+
+    #categorySelect{border:1px solid #e3e9ed;background:#f7faf9;border-radius:30px;padding:10px 14px;font-weight:700;color:#3d4752;outline:none;cursor:pointer}
+    #categorySelect:focus{border-color:#0b7b48;box-shadow:0 8px 24px rgba(11,123,72,.12)}
+
+
+    .icon-btn:hover,.header-icons span:hover{color:#0b7b48;transform:translateY(-2px)}
+    #themeToggle:hover{transform:rotate(25deg) scale(1.15)}
+    .cart{position:relative}.cart b{position:absolute;right:-9px;top:-12px;background:#d89b00;color:#fff;border-radius:50%;font-size:12px;padding:3px 6px}
+
+    .hero{height:450px;overflow:hidden;position:relative;background:#effaf4}
+    .hero-track{height:100%;display:flex;transition:transform .75s ease}
+    .hero-slide{min-width:100%;height:100%;display:flex;align-items:center;justify-content:flex-end;padding:0 7%;background-size:cover;background-position:center left;background-repeat:no-repeat}
+    .hero-one{background-image:url("images/heroimage1.avif")}
+    .hero-two{background-image:url("images/heroimage2.jpg")}
+    .hero-three{background-image:url("images/heroimage3.avif")}
+    .hero-copy{width:min(490px,92%);text-align:left;padding:48px 52px;border-radius:28px;box-shadow:0 30px 85px rgba(0,0,0,.20);position:relative;overflow:hidden;animation:fadeUp .9s ease;border:1px solid rgba(255,255,255,.65)}
+    .hero-copy::before{content:"";position:absolute;width:155px;height:155px;right:-55px;top:-55px;border-radius:50%;opacity:.9}
+    .hero-copy p{margin:0;font-size:15px;letter-spacing:4px;text-transform:uppercase;font-weight:800;position:relative}
+    .hero-copy h1{font-family:Georgia,serif;font-size:48px;letter-spacing:6px;line-height:1.08;margin:10px 0 24px;position:relative}
+    .hero-copy a{color:#fff;border-radius:30px;padding:15px 32px;display:inline-block;font-weight:800;box-shadow:0 14px 30px rgba(0,0,0,.20);transition:.3s;position:relative}
+    .hero-copy a:hover{transform:translateY(-3px);box-shadow:0 20px 42px rgba(0,0,0,.26)}
+    .hero-one .hero-copy{background:linear-gradient(135deg,rgba(255,255,255,.94),rgba(240,248,255,.88));border-color:rgba(11,123,72,.25)}
+    .hero-one .hero-copy::before{background:rgba(11,123,72,.13)}.hero-one .hero-copy p{color:#0b7b48}.hero-one .hero-copy h1{color:#0c2b1e}.hero-one .hero-copy a{background:linear-gradient(135deg,#0b7b48,#16a34a)}
+    .hero-two .hero-copy{background:linear-gradient(135deg,rgba(255,255,255,.94),rgba(232,242,255,.88));border-color:rgba(37,99,235,.25)}
+    .hero-two .hero-copy::before{background:rgba(37,99,235,.13)}.hero-two .hero-copy p{color:#2563eb}.hero-two .hero-copy h1{color:#0f172a}.hero-two .hero-copy a{background:linear-gradient(135deg,#1d4ed8,#60a5fa)}
+    .hero-three .hero-copy{background:linear-gradient(135deg,rgba(255,255,255,.94),rgba(255,248,232,.88));border-color:rgba(212,175,55,.45)}
+    .hero-three .hero-copy::before{background:rgba(212,175,55,.18)}.hero-three .hero-copy p{color:#8b6a38}.hero-three .hero-copy h1{color:#4b1018}.hero-three .hero-copy a{background:linear-gradient(135deg,#7b111c,#d4af37)}
+    .hero-btn{position:absolute;top:50%;transform:translateY(-50%);border:0;background:#fff;border-radius:50%;width:44px;height:44px;font-size:34px;line-height:36px;box-shadow:0 8px 20px #0002;cursor:pointer;z-index:5;transition:.3s}
+    .hero-btn:hover{background:#0b7b48;color:#fff}.hero-btn.left{left:24px}.hero-btn.right{right:24px}
+
+    .stats-band{background:linear-gradient(135deg,#005d35,#008f52);color:white;display:grid;grid-template-columns:repeat(4,1fr);text-align:center;padding:38px 5%}
+    .stats-band h3{color:#d4af37;font-size:30px;margin:0}.stats-band p{margin:8px 0 0;text-transform:uppercase;font-size:13px;letter-spacing:1px}
+    .category-section{text-align:center;padding:75px 10%}.section-kicker{letter-spacing:7px;color:#8b6a38;font-weight:800;font-size:13px;text-transform:uppercase}.category-section h2{font-size:34px;margin:8px 0}
+    .category-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;margin-top:38px}.cat-card{background:#fff;border:1px solid #edf0f3;border-radius:24px;padding:20px;box-shadow:0 14px 40px #00000010;font-weight:800;transition:.3s;animation:fadeUp .8s ease}.cat-card:hover{transform:translateY(-8px);box-shadow:0 24px 60px rgba(0,0,0,.14)}.cat-card img{width:160px;height:160px;border-radius:50%;object-fit:cover;display:block;margin:auto auto 16px}
+
+    .about-gemtrader{display:grid;grid-template-columns:1.05fr .95fr;gap:60px;padding:95px 7%;align-items:center;background:radial-gradient(circle at top left,#e8fff3 0,#fff 45%);position:relative;overflow:hidden}
+    .about-gemtrader::before{content:"";position:absolute;right:-120px;top:60px;width:260px;height:260px;border-radius:50%;background:rgba(212,175,55,.12)}
+    .about-text{position:relative;z-index:1}.about-text h2{font-family:Georgia,serif;font-size:44px;line-height:1.15;margin:12px 0 24px;color:#0c2b1e}.about-text p{line-height:1.85;color:#52605b;font-size:16px}
+  
+    .feature-box{border:1px solid rgba(212,175,55,.35);border-radius:28px;padding:34px;background:rgba(255,255,255,.88);box-shadow:0 24px 70px rgba(0,0,0,.10);position:relative;overflow:hidden;z-index:1}
+    .feature-box::before{content:"";position:absolute;right:-80px;top:-80px;width:180px;height:180px;background:rgba(212,175,55,.16);border-radius:50%}
+    .feature-item{display:flex;gap:18px;margin-bottom:22px;align-items:flex-start;position:relative;z-index:1;padding:18px;border-radius:18px;background:#fff;box-shadow:0 10px 30px rgba(0,0,0,.05);transition:.3s}.feature-item:last-child{margin-bottom:0}.feature-item:hover{transform:translateX(10px) scale(1.02)}
+    .feature-item span{font-size:25px;width:48px;height:48px;display:grid;place-items:center;background:#f3fbf8;border-radius:50%;flex-shrink:0}.feature-item h4{margin:0 0 6px;color:#0b7b48;font-size:18px}.feature-item p{margin:0;font-size:14px;line-height:1.65;color:#5a6460}
+
+    .site-footer{background:#0c2b1e;color:#fff}.footer-container{width:90%;max-width:1400px;margin:auto;padding:70px 0;display:grid;grid-template-columns:repeat(4,1fr);gap:40px}.footer-column h3{color:#d4af37;margin-bottom:20px;font-size:22px}.footer-column p{line-height:1.8;color:#dcdcdc}.footer-column ul{list-style:none;padding:0}.footer-column ul li{margin-bottom:12px}.footer-column ul li a{color:#dcdcdc;transition:.3s}.footer-column ul li a:hover{color:#d4af37;padding-left:5px}.footer-bottom{text-align:center;padding:20px;border-top:1px solid rgba(255,255,255,.1);color:#cfcfcf;font-size:14px}
+
+    .search-overlay{position:fixed;inset:0;background:rgba(5,20,13,.62);backdrop-filter:blur(7px);display:flex;justify-content:center;align-items:flex-start;padding-top:120px;z-index:9999;opacity:0;visibility:hidden;transition:.3s}.search-overlay.active{opacity:1;visibility:visible}.search-container{width:76%;max-width:850px;background:white;border-radius:28px;padding:18px;box-shadow:0 30px 80px rgba(0,0,0,.22)}.search-row{display:flex;align-items:center;gap:12px}.search-row input{flex:1;border:1px solid #e4e9ed;outline:none;font-size:18px;padding:17px 22px;border-radius:20px}.search-row button{border:none;background:#0b7b48;color:white;width:52px;height:52px;border-radius:50%;cursor:pointer;font-size:18px}.search-hint{margin:14px 8px 0;color:#66736e;font-size:14px}.search-results{margin-top:18px;display:grid;gap:10px}.search-result-item{padding:14px 18px;border-radius:16px;background:#f5faf7;display:flex;justify-content:space-between;align-items:center}.search-result-item b{color:#0b7b48}.hidden-by-search{display:none!important}
+
+   
+    @keyframes fadeUp{from{opacity:0;transform:translateY(36px)}to{opacity:1;transform:translateY(0)}}
+    @media(max-width:1150px){.site-header{padding:0 4%;gap:16px}.brand img{width:220px;max-height:92px}nav{gap:16px}.header-search{display:none}.category-grid{grid-template-columns:repeat(2,1fr)}.about-gemtrader{grid-template-columns:1fr}.footer-container{grid-template-columns:1fr 1fr}}
+    @media(max-width:900px){.site-header{flex-wrap:wrap;justify-content:space-between;padding:16px 5%;gap:14px}.menu-toggle{display:inline-flex}
+    .site-header nav{display:none}.header-icons{width:100%;display:flex;flex-wrap:wrap;gap:12px;justify-content:flex-end}.header-icons select{min-width:180px;width:100%;max-width:240px}}
+    @media(max-width:700px){.site-header{min-height:82px;flex-wrap:wrap;justify-content:space-between;padding:14px 4%}.brand img{width:180px}.menu-toggle{display:inline-flex}.site-header nav{display:none}.site-header.nav-open nav{display:flex;flex-direction:column;width:100%;gap:14px;background:#fff;padding:18px;border-radius:22px;box-shadow:0 18px 60px rgba(0,0,0,.12)}.site-header.nav-open nav a{width:100%;padding:12px 0}.header-icons{margin-left:auto;width:100%;display:flex;flex-wrap:wrap;gap:12px;justify-content:flex-end}.hero{height:430px}.hero-slide{justify-content:center;padding:0 5%;background-position:center}.hero-copy{text-align:center;padding:36px 28px}.hero-copy h1{font-size:32px;letter-spacing:4px}.stats-band{grid-template-columns:1fr 1fr;gap:25px}.category-grid{grid-template-columns:1fr}.footer-container{grid-template-columns:1fr}.search-container{width:92%;padding:14px}.about-text h2{font-size:32px}.hero-btn{width:38px;height:38px;font-size:28px}.hero-btn.left{left:12px}.hero-btn.right{right:12px}}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html"><img src="images/Logo.png" alt="GemTrader Logo" /></a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-label="Toggle navigation">☰</button>
+    <nav>
+  <a href="index.html">Home</a>
+  <a href="gallery.html">Gemstones</a>
+  <a href="index.html#about">About Us</a>
+  <a href="events.html">Events</a>
+  <a href="contact.html">Contact</a>
+
+  <div class="dropdown">
+    <a href="categories.html" class="dropbtn">Gem Categories ▼</a>
+    <div class="dropdown-content">
+      <a href="sapphire.html">Sapphire</a>
+      <a href="ruby.html">Ruby</a>
+
+      <a href="tourmaline.html">Tourmaline</a>
+      <a href="aquamarine.html">Aquamarine</a>
+    </div>
+  </div>
+</nav>
+<form id="headerSearchForm" class="header-search">
+      <input type="search" id="headerSearchInput" placeholder="Search gemstones..." oninput="syncSearch(this.value)" />
+      <button type="submit" aria-label="Search">🔍</button>
+    </form>
+    <div class="header-icons">
+      <select id="categorySelect" onchange="navigateCategory(this.value)" aria-label="Select gem category">
+        <option value="">All Categories</option>
+        <option value="Sapphire">Sapphire</option>
+        <option value="Ruby">Ruby</option>
+  
+        <option value="Tourmaline">Tourmaline</option>
+        <option value="Aquamarine">Aquamarine</option>
+      </select>
+      <a href="favorites.html" class="icon-btn" aria-label="Favorites">♡</a>
+      <a href="cart.html" class="cart" aria-label="Cart">🛒<b>1</b></a>
+ 
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-track" id="heroTrack">
+        <div class="hero-slide hero-one"><div class="hero-copy"><p>Beautiful Gemstones</p><h1>COLLECTION</h1><a href="dashboard.html">Shop Collection</a></div></div>
+        <div class="hero-slide hero-two"><div class="hero-copy"><p>Natural Ceylon Gems</p><h1>SAPPHIRES</h1><a href="dashboard.html">Explore Gems</a></div></div>
+        <div class="hero-slide hero-three"><div class="hero-copy"><p>Premium Loose Stones</p><h1>RUBY & SPINEL</h1><a href="dashboard.html">View Products</a></div></div>
+      </div>
+      <button class="hero-btn left" onclick="moveHero(-1)" aria-label="Previous slide">‹</button>
+      <button class="hero-btn right" onclick="moveHero(1)" aria-label="Next slide">›</button>
+    </section>
+
+    <section class="stats-band">
+      <div><h3>2,500+</h3><p>Years of Heritage</p></div>
+      <div><h3>80+</h3><p>Gem Varieties</p></div>
+      <div><h3>75+</h3><p>Export Countries</p></div>
+      <div><h3>100%</h3><p>Certified Quality</p></div>
+    </section>
+
+    <section class="category-section" id="gallery">
+      <p class="section-kicker">CATEGORY</p>
+      <h2>Shop by Gemstone Type</h2>
+      <div class="category-grid searchable-area">
+        <a class="cat-card" href="dashboard.html?category=Ruby" data-title="Ruby"><img src="images/ruby.jpg" alt="Ruby"><span>Ruby</span></a>
+        <a class="cat-card" href="dashboard.html?category=Sapphire" data-title="Sapphire"><img src="images/sapphire.jpeg" alt="Sapphire"><span>Sapphire</span></a>
+        <a class="cat-card" href="dashboard.html?category=Aquamarine" data-title="Aquamarine"><img src="images/aquamarine.jpeg" alt="Aquamarine"><span>Aquamarine</span></a>
+        <a class="cat-card" href="dashboard.html?category=Tourmaline" data-title="Tourmaline"><img src="images/tourmaline.jpeg" alt="Tourmaline"><span>Tourmaline</span></a>
+      </div>
+    </section>
+
+    <section class="about-gemtrader" id="about">
+      <div class="about-text">
+        <p class="section-kicker">ABOUT GEMTRADER</p>
+        <h2>Sri Lanka's Premier Digital Gemstone Marketplace</h2>
+        <p>GemTrader bridges Sri Lanka's legendary gemstone heritage with the modern global marketplace. Our platform connects gemstone buyers, collectors, exporters, and verified sellers through a secure, transparent, and professional digital trading experience.</p>
+        <p>From the world-famous Ceylon Blue Sapphire of Ratnapura to rare  Ruby, Spinel, Cat's Eye, and other precious gemstones, GemTrader helps buyers discover authentic treasures backed by certification, trust, and industry expertise.</p>
+        <p>Built on transparency, authenticity, and innovation, GemTrader empowers Sri Lankan suppliers to reach international markets while giving global buyers the confidence to trade with verified local professionals.</p>
+         </div>
+
+      <div class="feature-box">
+        <div class="feature-item"><span>✅</span><div><h4>Verified Sellers</h4><p>Every seller undergoes a verification process before joining the platform, ensuring credibility and buyer confidence.</p></div></div>
+        <div class="feature-item"><span>💎</span><div><h4>Certified Gemstones</h4><p>Access gemstones certified by recognized institutions such as GIA, GIC, and GSCSL for guaranteed authenticity.</p></div></div>
+        <div class="feature-item"><span>🌍</span><div><h4>Global Marketplace</h4><p>Connecting Sri Lankan gemstone suppliers with buyers and businesses in more than 75 countries worldwide.</p></div></div>
+        <div class="feature-item"><span>🔒</span><div><h4>Secure Transactions</h4><p>Designed to provide a safe, transparent, and reliable trading experience for both buyers and sellers.</p></div></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" id="contact">
+    <div class="footer-container">
+      <div class="footer-column"><h3>GemTrader</h3><p>Sri Lanka's trusted digital gemstone marketplace connecting verified buyers and sellers worldwide.</p></div>
+      <div class="footer-column"><h3>Quick Links</h3><ul><li><a href="index.html">Home</a></li><li><a href="gallery.html">Gemstones</a></li><li><a href="#about">About Us</a></li><li><a href="#gallery">Gallery</a></li><li><a href="#contact">Contact</a></li></ul></div>
+      <div class="footer-column"><h3>Gem Categories</h3><ul><li><a href="dashboard.html?category=Sapphire">Sapphire</a></li><li><a href="dashboard.html?category=Ruby">Ruby</a></li><li><a href="dashboard.html?category=Tourmaline">Tourmaline</a></li><li><a href="dashboard.html?category=Aquamarine">Aquamarine</a></li></ul></div>
+      <div class="footer-column"><h3>Contact Us</h3><p>📍 Ratnapura, Sri Lanka</p><p>📞 +94 71 234 5678</p><p>✉ info@gemtrader.lk</p><p>🌐 www.gemtrader.lk</p></div>
+    </div>
+    <div class="footer-bottom"><p>© 2026 GemTrader.lk | All Rights Reserved | Sri Lanka's Digital Gem Marketplace</p></div>
+  </footer>
+
+  <div id="searchOverlay" class="search-overlay" aria-hidden="true">
+    <div class="search-container">
+      <div class="search-row">
+        <input type="search" id="searchInput" placeholder="Search ruby, sapphire, aquamarine..." oninput="searchGemstones()" onkeydown="handleSearchKey(event)" />
+        <button onclick="closeSearch()" aria-label="Close search">✕</button>
+      </div>
+      <p class="search-hint">Type a gemstone name. Press Enter to open full results in the dashboard.</p>
+      <div id="searchResults" class="search-results"></div>
+    </div>
+  </div>
+
+  <script>
+    const searchData = [
+      { name: "Ruby", url: "dashboard.html?category=Ruby" },
+      { name: "Sapphire", url: "dashboard.html?category=Sapphire" },
+      { name: "Aquamarine", url: "dashboard.html?category=Aquamarine" },
+      { name: "Tourmaline", url: "dashboard.html?category=Tourmaline" },
+
+      { name: "Cat's Eye", url: "dashboard.html?search=cat%27s%20eye" },
+      { name: "Spinel", url: "dashboard.html?search=spinel" }
+    ];
+
+    let heroIndex = 0;
+    let autoSlide;
+
+    function moveHero(direction){
+      const track = document.getElementById("heroTrack");
+      const slides = document.querySelectorAll(".hero-slide");
+      if(!track || !slides.length) return;
+      heroIndex = (heroIndex + direction + slides.length) % slides.length;
+      track.style.transform = `translateX(-${heroIndex * 100}%)`;
+    }
+
+    function startAutoSlide(){
+      stopAutoSlide();
+      autoSlide = setInterval(() => moveHero(1), 4500);
+    }
+
+    function stopAutoSlide(){
+      if(autoSlide) clearInterval(autoSlide);
+    }
+
+    const hero = document.querySelector(".hero");
+    if(hero){
+      hero.addEventListener("mouseenter", stopAutoSlide);
+      hero.addEventListener("mouseleave", startAutoSlide);
+    }
+    startAutoSlide();
+
+
+
+    function openSearch(){
+      const overlay = document.getElementById("searchOverlay");
+      overlay.classList.add("active");
+      overlay.setAttribute("aria-hidden", "false");
+      setTimeout(() => document.getElementById("searchInput").focus(), 80);
+      renderSearchResults("");
+    }
+
+    function closeSearch(){
+      const overlay = document.getElementById("searchOverlay");
+      overlay.classList.remove("active");
+      overlay.setAttribute("aria-hidden", "true");
+    }
+
+    function toggleMobileNav(){
+      const header = document.querySelector('.site-header');
+      if(!header) return;
+      const isOpen = !header.classList.contains('nav-open');
+      header.classList.toggle('nav-open', isOpen);
+      const toggle = document.querySelector('.menu-toggle');
+      if(toggle) toggle.setAttribute('aria-expanded', String(isOpen));
+    }
+
+    function syncSearch(value){
+      const overlayInput = document.getElementById("searchInput");
+      overlayInput.value = value;
+      searchGemstones();
+    }
+
+    function searchGemstones(){
+      const query = document.getElementById("searchInput").value.trim().toLowerCase();
+      renderSearchResults(query);
+      document.querySelectorAll(".cat-card").forEach(card => {
+        const text = card.innerText.toLowerCase();
+        card.classList.toggle("hidden-by-search", query && !text.includes(query));
+      });
+    }
+
+    function renderSearchResults(query){
+      const box = document.getElementById("searchResults");
+      const results = searchData.filter(item => item.name.toLowerCase().includes(query)).slice(0, 6);
+      if(!query){
+        box.innerHTML = searchData.slice(0,4).map(item => `<a class="search-result-item" href="${item.url}"><b>${item.name}</b><span>View →</span></a>`).join("");
+        return;
+      }
+      box.innerHTML = results.length
+        ? results.map(item => `<a class="search-result-item" href="${item.url}"><b>${item.name}</b><span>View →</span></a>`).join("")
+        : `<div class="search-result-item"><b>No exact match</b><span>Press Enter for dashboard search</span></div>`;
+    }
+
+    function submitSearch(event){
+      event.preventDefault();
+      const query = document.getElementById("headerSearchInput").value.trim();
+      if(query) window.location.href = `dashboard.html?search=${encodeURIComponent(query)}`;
+    }
+
+    function navigateCategory(category) {
+      const query = category ? `?category=${encodeURIComponent(category)}` : '';
+      window.location.href = `dashboard.html${query}`;
+    }
+
+    function handleSearchKey(event){
+      if(event.key === "Enter"){
+        const query = event.target.value.trim();
+        if(query) window.location.href = `dashboard.html?search=${encodeURIComponent(query)}`;
+      }
+      if(event.key === "Escape") closeSearch();
+    }
+
+    window.addEventListener("click", function(e){
+      const overlay = document.getElementById("searchOverlay");
+      if(e.target === overlay) closeSearch();
+      if(e.target.closest('.menu-toggle')) return;
+      if(e.target.closest('.site-header.nav-open nav a') || e.target.closest('.site-header.nav-open .dropdown-content a')) {
+        const header = document.querySelector('.site-header');
+        if(header) {
+          header.classList.remove('nav-open');
+          const toggle = document.querySelector('.menu-toggle');
+          if(toggle) toggle.setAttribute('aria-expanded','false');
+        }
+      }
+    });
+
+    document.querySelector('.menu-toggle')?.addEventListener('click', toggleMobileNav);
+  </script>
+</body>
+</html>

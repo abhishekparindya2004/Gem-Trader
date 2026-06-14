@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cart | GemTrader</title>
+  <link rel="icon" type="image/png" href="images/mainlogo.png" />
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="app.js"></script>
+</head>
+<body>
+   <header class="site-header">
+    <a class="brand" href="index.html"><img src="images/Logo.png" alt="GemTrader Logo" /></a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-label="Toggle navigation">☰</button>
+    <nav>
+  <a href="index.html">Home</a>
+  <a href="gallery.html">Gemstones</a>
+  <a href="index.html#about">About Us</a>
+  <a href="events.html">Events</a>
+  <a href="contact.html">Contact</a>
+
+  <div class="dropdown">
+    <a href="categories.html" class="dropbtn">Gem Categories ▼</a>
+    <div class="dropdown-content">
+      <a href="sapphire.html">Sapphire</a>
+      <a href="ruby.html">Ruby</a>
+
+      <a href="tourmaline.html">Tourmaline</a>
+      <a href="aquamarine.html">Aquamarine</a>
+    </div>
+  </div>
+</nav>
+<form id="headerSearchForm" class="header-search">
+      <input type="search" id="headerSearchInput" placeholder="Search gemstones..." oninput="syncSearch(this.value)" />
+      <button type="submit" aria-label="Search">🔍</button>
+    </form>
+    <div class="header-icons">
+      <select id="categorySelect" onchange="navigateCategory(this.value)" aria-label="Select gem category">
+        <option value="">All Categories</option>
+        <option value="Sapphire">Sapphire</option>
+        <option value="Ruby">Ruby</option>
+  
+        <option value="Tourmaline">Tourmaline</option>
+        <option value="Aquamarine">Aquamarine</option>
+      </select>
+      <a href="favorites.html" class="icon-btn" aria-label="Favorites">♡</a>
+      <a href="cart.html" class="cart" aria-label="Cart">🛒<b>1</b></a>
+  
+    </div>
+  </header>
+  <main>
+    <section class="page-hero cart-hero">
+      <div class="page-hero-copy">
+        <p class="section-kicker">SHOPPING CART</p>
+        <h1>Your secure checkout</h1>
+        <p>Review your selected gemstones and complete payment through our secure gateway. All transactions are protected and ready for global shipment.</p>
+      </div>
+    </section>
+
+   <section class="cart-layout">
+  <div class="cart-items" id="cartItems"></div>
+
+  <aside class="cart-summary">
+    <h2>Order Summary</h2>
+
+    <div class="summary-line"><span>Items total</span><span id="itemsTotal">$0.00</span></div>
+    <div class="summary-line"><span>Shipping</span><span id="shippingTotal">$24.00</span></div>
+    <div class="summary-line total"><span>Grand total</span><span id="grandTotal">$0.00</span></div>
+
+    <h3>Payment Details</h3>
+
+    <form class="payment-form" onsubmit="checkoutCart(event)">
+      <label>Cardholder name<input type="text" placeholder="Name on card" required></label>
+      <label>Card number<input type="text" placeholder="1234 5678 9012 3456" required></label>
+      <label>Expiry date<input type="text" placeholder="MM / YY" required></label>
+      <label>CVV<input type="text" placeholder="123" required></label>
+      <label>Billing email<input type="email" placeholder="you@example.com" required></label>
+
+      <button class="hero-link" id="payButton" type="submit">Pay $0.00</button>
+    </form>
+
+    <p class="payment-note">
+      Secure payments processed through GemTrader Pay. Your card details are never stored on this page.
+    </p>
+  </aside>
+</section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-column"><h3>GemTrader</h3><p>Complete your purchase with confidence and get worldwide shipping from Sri Lanka’s gemstone heart.</p></div>
+      <div class="footer-column"><h3>Quick Links</h3><ul><li><a href="dashboard.html">Gemstones</a></li><li><a href="favorites.html">Favorites</a></li><li><a href="contact.html">Contact</a></li><li><a href="categories.html">Gem Categories</a></li></ul></div>
+      <div class="footer-column"><h3>Gem Categories</h3><ul><li><a href="ruby.html">Ruby</a></li><li><a href="sapphire.html">Sapphire</a></li><li><a href="tourmaline.html">Tourmaline</a></li><li><a href="aquamarine.html">Aquamarine</a></li></ul></div>
+      <div class="footer-column"><h3>Contact Us</h3><p>📍 Ratnapura, Sri Lanka</p><p>📞 +94 71 234 5678</p><p>✉ info@gemtrader.lk</p><p>🌐 www.gemtrader.lk</p></div>
+    </div>
+    <div class="footer-bottom"><p>© 2026 GemTrader.lk | All Rights Reserved | Sri Lanka's Digital Gem Marketplace</p></div>
+  </footer>
+  <div id="searchOverlay" class="search-overlay" aria-hidden="true">
+    <div class="search-container">
+      <input type="search" id="searchInput" placeholder="Search gemstones..." onkeydown="handleSearchKey(event)" />
+      <button type="button" onclick="closeSearch()" aria-label="Close search">✕</button>
+      <div id="searchResults" class="search-results"></div>
+    </div>
+  </div>
+  <script>
+    const shipping = 24;
+
+    function getPageCart() {
+      return window.getCartItems ? window.getCartItems() : JSON.parse(localStorage.getItem('gemTraderCart') || '[]');
+    }
+
+    function savePageCart(items) {
+      if (window.saveCartItems) {
+        window.saveCartItems(items);
+      } else {
+        localStorage.setItem('gemTraderCart', JSON.stringify(items));
+      }
+    }
+
+    function renderCart() {
+      const cartItems = document.getElementById('cartItems');
+      const cart = getPageCart();
+      cartItems.innerHTML = '';
+
+      if (cart.length === 0) {
+        cartItems.innerHTML = `
+          <div class="empty-cart">
+            <h2>Your cart is empty</h2>
+            <p>Add premium gemstones to continue checkout.</p>
+            <a href="dashboard.html" class="hero-link">Browse Gemstones</a>
+          </div>
+        `;
+        updateTotals(cart);
+        return;
+      }
+
+      cart.forEach(item => {
+        const product = window.getProductById ? window.getProductById(item.id) : null;
+        if (!product) return;
+        const qty = item.qty ?? item.quantity ?? 1;
+
+        cartItems.innerHTML += `
+          <article class="cart-card">
+            <img src="${product.image}" alt="${product.title}" onerror="this.src='images/Logo.png'">
+            <div class="cart-info">
+              <h3>${product.title}</h3>
+              <p>${product.description}</p>
+              <strong>$${product.price.toFixed(2)}</strong>
+            </div>
+            <div class="cart-actions">
+              <button onclick="decreaseQty(${product.id})">−</button>
+              <span>${qty}</span>
+              <button onclick="increaseQty(${product.id})">+</button>
+            </div>
+            <button class="remove-btn" onclick="removeItem(${product.id})">Remove</button>
+          </article>
+        `;
+      });
+
+      updateTotals(cart);
+    }
+
+    function increaseQty(id) {
+      const cart = getPageCart();
+      const item = cart.find(product => product.id === id);
+      if (!item) return;
+      item.qty += 1;
+      savePageCart(cart);
+      renderCart();
+      window.updateCartCount?.();
+    }
+
+    function decreaseQty(id) {
+      const cart = getPageCart();
+      const item = cart.find(product => product.id === id);
+      if (!item) return;
+      if (item.qty > 1) {
+        item.qty -= 1;
+        savePageCart(cart);
+        renderCart();
+      } else {
+        removeItem(id);
+      }
+      window.updateCartCount?.();
+    }
+
+    function removeItem(id) {
+      const cart = getPageCart().filter(item => item.id !== id);
+      savePageCart(cart);
+      renderCart();
+      window.updateCartCount?.();
+    }
+
+    function updateTotals(cart) {
+      const itemsTotal = cart.reduce((total, item) => {
+        const product = window.getProductById ? window.getProductById(item.id) : null;
+        const qty = item.qty ?? item.quantity ?? 1;
+        return total + (product ? product.price * qty : 0);
+      }, 0);
+      const finalShipping = cart.length > 0 ? shipping : 0;
+      const grandTotal = itemsTotal + finalShipping;
+      const itemCount = cart.reduce((total, item) => total + (item.qty ?? item.quantity ?? 1), 0);
+
+      document.getElementById('itemsTotal').textContent = `$${itemsTotal.toFixed(2)}`;
+      document.getElementById('shippingTotal').textContent = `$${finalShipping.toFixed(2)}`;
+      document.getElementById('grandTotal').textContent = `$${grandTotal.toFixed(2)}`;
+      document.getElementById('payButton').textContent = `Pay $${grandTotal.toFixed(2)}`;
+
+      const cartBadge = document.querySelector('.cart b');
+      if (cartBadge) cartBadge.textContent = itemCount;
+    }
+
+    function checkoutCart(event) {
+      event.preventDefault();
+      const cart = getPageCart();
+      if (cart.length === 0) {
+        alert('Your cart is empty.');
+        return;
+      }
+      if (window.showToast) {
+        window.showToast('Payment submitted successfully! Thank you for shopping with GemTrader.', 'success');
+      } else {
+        alert('Payment submitted successfully! Thank you for shopping with GemTrader.');
+      }
+      savePageCart([]);
+      renderCart();
+      window.updateCartCount?.();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCart();
+      window.updateCartCount?.();
+    });
+  </script>
+   <style>
+    .site-header {
+    position: relative;
+}
+
+.brand {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.header-search{flex:1;max-width:350px;margin-left:auto;position:relative}
+    .header-search input{width:100%;border:1px solid #e3e9ed;background:#f7faf9;border-radius:40px;padding:14px 50px 14px 20px;font-size:15px;outline:none;transition:.25s}
+    .header-search input:focus{border-color:#0b7b48;background:#fff;box-shadow:0 8px 24px rgba(11,123,72,.12)}
+    .header-search button{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:38px;height:38px;border:0;border-radius:50%;background:#0b7b48;color:#fff;cursor:pointer;font-size:16px}
+    .header-icons{display:flex;align-items:center;gap:20px;font-size:22px;margin-left:8px}
+
+  </style>
+  <script>
+    function openSearch(){
+      const overlay = document.getElementById("searchOverlay");
+      overlay.classList.add("active");
+      overlay.setAttribute("aria-hidden", "false");
+      setTimeout(() => document.getElementById("searchInput").focus(), 80);
+      renderSearchResults("");
+    }
+
+    function closeSearch(){
+      const overlay = document.getElementById("searchOverlay");
+      overlay.classList.remove("active");
+      overlay.setAttribute("aria-hidden", "true");
+    }
+
+    function toggleMobileNav(){
+      const header = document.querySelector('.site-header');
+      if(!header) return;
+      const isOpen = !header.classList.contains('nav-open');
+      header.classList.toggle('nav-open', isOpen);
+      const toggle = document.querySelector('.menu-toggle');
+      if(toggle) toggle.setAttribute('aria-expanded', String(isOpen));
+    }
+
+    function syncSearch(value){
+      const overlayInput = document.getElementById("searchInput");
+      overlayInput.value = value;
+      searchGemstones();
+    }
+
+    function searchGemstones(){
+      const query = document.getElementById("searchInput").value.trim().toLowerCase();
+      renderSearchResults(query);
+      document.querySelectorAll(".cat-card").forEach(card => {
+        const text = card.innerText.toLowerCase();
+        card.classList.toggle("hidden-by-search", query && !text.includes(query));
+      });
+    }
+
+    function renderSearchResults(query){
+      const box = document.getElementById("searchResults");
+      const results = searchData.filter(item => item.name.toLowerCase().includes(query)).slice(0, 6);
+      if(!query){
+        box.innerHTML = searchData.slice(0,4).map(item => `<a class="search-result-item" href="${item.url}"><b>${item.name}</b><span>View →</span></a>`).join("");
+        return;
+      }
+      box.innerHTML = results.length
+        ? results.map(item => `<a class="search-result-item" href="${item.url}"><b>${item.name}</b><span>View →</span></a>`).join("")
+        : `<div class="search-result-item"><b>No exact match</b><span>Press Enter for dashboard search</span></div>`;
+    }
+
+    function submitSearch(event){
+      event.preventDefault();
+      const query = document.getElementById("headerSearchInput").value.trim();
+      if(query) window.location.href = `dashboard.html?search=${encodeURIComponent(query)}`;
+    }
+
+    function navigateCategory(category) {
+      const query = category ? `?category=${encodeURIComponent(category)}` : '';
+      window.location.href = `dashboard.html${query}`;
+    }
+
+    function handleSearchKey(event){
+      if(event.key === "Enter"){
+        const query = event.target.value.trim();
+        if(query) window.location.href = `dashboard.html?search=${encodeURIComponent(query)}`;
+      }
+      if(event.key === "Escape") closeSearch();
+    }
+
+    window.addEventListener("click", function(e){
+      const overlay = document.getElementById("searchOverlay");
+      if(e.target === overlay) closeSearch();
+      if(e.target.closest('.menu-toggle')) return;
+      if(e.target.closest('.site-header.nav-open nav a') || e.target.closest('.site-header.nav-open .dropdown-content a')) {
+        const header = document.querySelector('.site-header');
+        if(header) {
+          header.classList.remove('nav-open');
+          const toggle = document.querySelector('.menu-toggle');
+          if(toggle) toggle.setAttribute('aria-expanded','false');
+        }
+      }
+    });
+
+    document.querySelector('.menu-toggle')?.addEventListener('click', toggleMobileNav);
+  </script>
+</body>
+</html>
